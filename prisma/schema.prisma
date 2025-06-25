@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model entradasmaterial {
+  id_entrada    Int          @id @default(autoincrement())
+  id_material   Int
+  cantidad      Int
+  id_proveedor  Int?
+  fecha_entrada DateTime?    @db.Date
+  materiales    materiales   @relation(fields: [id_material], references: [id_material], onDelete: NoAction, onUpdate: NoAction, map: "entradasmaterial_ibfk_1")
+  proveedores   proveedores? @relation(fields: [id_proveedor], references: [id_proveedor], onDelete: NoAction, onUpdate: NoAction, map: "entradasmaterial_ibfk_2")
+
+  @@index([id_material], map: "id_material")
+  @@index([id_proveedor], map: "id_proveedor")
+}
+
+model materiales {
+  id_material      Int                @id @default(autoincrement())
+  nombre           String             @db.VarChar(100)
+  descripcion      String?            @db.Text
+  unidad_medida    String             @db.VarChar(50)
+  precio_unitario  Decimal            @db.Decimal(10, 2)
+  stock_actual     Int                @default(0)
+  fecha_registro   DateTime?          @db.Date
+  entradasmaterial entradasmaterial[]
+  salidasmaterial  salidasmaterial[]
+}
+
+model proveedores {
+  id_proveedor     Int                @id @default(autoincrement())
+  nombre_empresa   String             @db.VarChar(150)
+  contacto         String?            @db.VarChar(100)
+  telefono         String?            @db.VarChar(20)
+  email            String?            @db.VarChar(100)
+  direccion        String?            @db.Text
+  entradasmaterial entradasmaterial[]
+}
+
+model salidasmaterial {
+  id_salida    Int        @id @default(autoincrement())
+  id_material  Int
+  cantidad     Int
+  destino      String?    @db.VarChar(150)
+  fecha_salida DateTime?  @db.Date
+  materiales   materiales @relation(fields: [id_material], references: [id_material], onDelete: NoAction, onUpdate: NoAction, map: "salidasmaterial_ibfk_1")
+
+  @@index([id_material], map: "id_material")
+
+}
