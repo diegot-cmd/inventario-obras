@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-
+import { useRouter } from 'next/navigation'
 interface Material {
   id_material: number;
   nombre: string;
@@ -13,6 +13,7 @@ interface Material {
 }
 
 export default function MaterialesPage() {
+    const router = useRouter()
   const [materiales, setMateriales] = useState<Material[]>([]);
   const [loading, setLoading] = useState(true);
   const [editId, setEditId] = useState<number | null>(null);
@@ -127,7 +128,9 @@ export default function MaterialesPage() {
   }, []);
 
   return (
-    <main className="p-6">
+    <main className="p-6"><button onClick={() => router.push('/')} className="mb-4 inline-block px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
+  ← Volver al Inicio
+</button>
       <h1 className="text-2xl font-bold mb-4">Inventario de Materiales</h1>
 
       <form onSubmit={handleSubmit} className="mb-6 grid grid-cols-2 gap-4">
