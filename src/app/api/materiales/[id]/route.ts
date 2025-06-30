@@ -1,15 +1,21 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 
+// ✅ GET: Obtener material por ID
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const id = Number(params.id)
+  const id = context.params?.id
+  const idMaterial = Number(id)
+
+  if (isNaN(idMaterial)) {
+    return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
+  }
 
   try {
     const material = await prisma.materiales.findUnique({
-      where: { id_material: id }
+      where: { id_material: idMaterial },
     })
 
     if (!material) {
@@ -26,47 +32,67 @@ export async function GET(
 // ✅ PUT: Actualizar material por ID
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const id = Number(params.id)
+  const id = context.params?.id
+  const idMaterial = Number(id)
+
+  if (isNaN(idMaterial)) {
+    return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
+  }
+
   const data = await req.json()
+
+  let fecha: Date
+  try {
+    fecha = new Date(data.fecha_registro)
+    if (isNaN(fecha.getTime())) {
+      return NextResponse.json({ error: 'Fecha inválida' }, { status: 400 })
+    }
+  } catch {
+    return NextResponse.json({ error: 'Fecha inválida' }, { status: 400 })
+  }
 
   try {
     const actualizado = await prisma.materiales.update({
-      where: { id_material: id },
+      where: { id_material: idMaterial },
       data: {
         nombre: data.nombre,
         descripcion: data.descripcion,
         unidad_medida: data.unidad_medida,
-        precio_unitario: parseFloat(data.precio_unitario),
-        stock_actual: parseInt(data.stock_actual),
-        fecha_registro: new Date(data.fecha_registro)
-      }
+        precio_unitario: Number(data.precio_unitario),
+        stock_actual: Number(data.stock_actual),
+        fecha_registro: fecha,
+      },
     })
 
     return NextResponse.json(actualizado)
   } catch (error) {
     console.error('Error al actualizar:', error)
-    return NextResponse.json({ error: 'Error al actualizar material' }, { status: 500 })
+    return NextResponse.json({ error: 'No se pudo actualizar' }, { status: 500 })
   }
 }
 
-
-// DELETE: Eliminar material
+// ✅ DELETE: Eliminar material por ID
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const id = Number(params.id)
+  const id = context.params?.id
+  const idMaterial = Number(id)
+
+  if (isNaN(idMaterial)) {
+    return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
+  }
 
   try {
     await prisma.materiales.delete({
-      where: { id_material: id }
+      where: { id_material: idMaterial },
     })
 
-    return NextResponse.json({ mensaje: 'Material eliminado correctamente' })
+    return NextResponse.json({ message: 'Material eliminado correctamente' })
   } catch (error) {
-    console.error('Error al eliminar material:', error)
-    return NextResponse.json({ error: 'Error al eliminar material' }, { status: 500 })
+    console.error('Error al eliminar:', error)
+    return NextResponse.json({ error: 'No se pudo eliminar' }, { status: 500 })
   }
 }
