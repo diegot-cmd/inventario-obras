@@ -1,21 +1,20 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 
-// ✅ GET: Obtener material por ID
+// ✅ GET: Obtener un material por ID
 export async function GET(
   req: Request,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
-  const id = context.params?.id
-  const idMaterial = Number(id)
+  const id = Number(params.id)
 
-  if (isNaN(idMaterial)) {
+  if (isNaN(id)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
   }
 
   try {
     const material = await prisma.materiales.findUnique({
-      where: { id_material: idMaterial },
+      where: { id_material: id }
     })
 
     if (!material) {
@@ -29,13 +28,12 @@ export async function GET(
   }
 }
 
-// ✅ PUT: Actualizar material por ID
+// ✅ PUT: Actualizar un material por ID
 export async function PUT(
   req: Request,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
-  const id = context.params?.id
-  const idMaterial = Number(id)
+  const idMaterial = Number(params.id)
 
   if (isNaN(idMaterial)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
@@ -73,19 +71,27 @@ export async function PUT(
   }
 }
 
-// ✅ DELETE: Eliminar material por ID
+// ✅ DELETE: Eliminar un material por ID
 export async function DELETE(
   req: Request,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
-  const id = context.params?.id
-  const idMaterial = Number(id)
+  const idMaterial = Number(params.id)
 
   if (isNaN(idMaterial)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
   }
 
   try {
+    // Eliminar relaciones antes (entradas y salidas)
+    await prisma.entradasmaterial.deleteMany({
+      where: { id_material: idMaterial },
+    })
+
+    await prisma.salidasmaterial.deleteMany({
+      where: { id_material: idMaterial },
+    })
+
     await prisma.materiales.delete({
       where: { id_material: idMaterial },
     })

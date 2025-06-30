@@ -13,7 +13,7 @@ model entradasmaterial {
   cantidad      Int
   id_proveedor  Int?
   fecha_entrada DateTime?    @db.Date
-  materiales    materiales   @relation(fields: [id_material], references: [id_material], onDelete: NoAction, onUpdate: NoAction, map: "entradasmaterial_ibfk_1")
+ materiales    materiales @relation(fields: [id_material], references: [id_material], onDelete: NoAction, map: "entradasmaterial_ibfk_1")
   proveedores   proveedores? @relation(fields: [id_proveedor], references: [id_proveedor], onDelete: NoAction, onUpdate: NoAction, map: "entradasmaterial_ibfk_2")
 
   @@index([id_material], map: "id_material")
@@ -48,7 +48,7 @@ model salidasmaterial {
   cantidad     Int
   destino      String?    @db.VarChar(150)
   fecha_salida DateTime?  @db.Date
-  materiales   materiales @relation(fields: [id_material], references: [id_material], onDelete: NoAction, onUpdate: NoAction, map: "salidasmaterial_ibfk_1")
+  materiales    materiales @relation(fields: [id_material], references: [id_material], onDelete: NoAction, map: "salidasmaterial_ibfk_1")
 
   @@index([id_material], map: "id_material")
 
