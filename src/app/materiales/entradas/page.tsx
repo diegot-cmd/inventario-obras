@@ -2,130 +2,73 @@
 
 import { useEffect, useState } from 'react'
 
-interface Material {
+interface Entrada {
+  id_salida?: number // en caso compartas interfaces
+  id_entrada: number
   id_material: number
-  nombre: string
+  cantidad: number
+  fecha_entrada: string
+  materiales: {
+    nombre: string
+    unidad_medida: string
+  }
+  proveedores?: {
+    nombre_empresa: string
+  } | null
 }
 
-interface Proveedor {
-  id_proveedor: number
-  nombre_empresa: string
-}
-
-export default function RegistrarEntrada() {
-  const [materiales, setMateriales] = useState<Material[]>([])
-  const [proveedores, setProveedores] = useState<Proveedor[]>([])
-  const [form, setForm] = useState({
-    id_material: '',
-    cantidad: '',
-    id_proveedor: '',
-    fecha_entrada: '',
-  })
-  const [mensaje, setMensaje] = useState('')
+export default function ListaEntradas() {
+  const [entradas, setEntradas] = useState<Entrada[]>([])
 
   useEffect(() => {
-    const fetchMateriales = async () => {
-      try {
-        const res = await fetch('/api/materiales')
-        const data = await res.json()
-        setMateriales(data)
-      } catch (err) {
-        console.error('Error al cargar materiales:', err)
-      }
-    }
-
-    const fetchProveedores = async () => {
-      try {
-        const res = await fetch('/api/proveedores')
-        const data = await res.json()
-        setProveedores(data)
-      } catch (err) {
-        console.error('Error al cargar proveedores:', err)
-      }
-    }
-
-    fetchMateriales()
-    fetchProveedores()
+    fetch('/api/entradas')
+      .then((res) => res.json())
+      .then((data) => setEntradas(data))
+      .catch((err) => console.error('Error al obtener entradas:', err))
   }, [])
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    try {
-      const res = await fetch('/api/entradas', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      })
-
-      const json = await res.json()
-
-      if (!res.ok) {
-        setMensaje(`❌ ${json.error || 'Error al registrar entrada'}`)
-      } else {
-        setMensaje('✅ Entrada registrada correctamente')
-        setForm({ id_material: '', cantidad: '', id_proveedor: '', fecha_entrada: '' })
-      }
-    } catch (err) {
-      console.error(err)
-      setMensaje('❌ Error al enviar los datos')
-    }
-  }
-
   return (
-    <main className="p-6 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Registrar Entrada de Material</h1>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Entradas de Material</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4 border rounded p-4 shadow-md">
-        <select name="id_material" value={form.id_material} onChange={handleChange} required className="border w-full p-2 rounded">
-          <option value="">Seleccionar Material</option>
-          {materiales.map((mat) => (
-            <option key={mat.id_material} value={mat.id_material}>
-              {mat.nombre}
-            </option>
-          ))}
-        </select>
-
-        <input
-          type="number"
-          name="cantidad"
-          placeholder="Cantidad"
-          value={form.cantidad}
-          onChange={handleChange}
-          required
-          className="border w-full p-2 rounded"
-        />
-
-        <select name="id_proveedor" value={form.id_proveedor} onChange={handleChange} className="border w-full p-2 rounded">
-          <option value="">Seleccionar Proveedor (opcional)</option>
-          {proveedores.map((prov) => (
-            <option key={prov.id_proveedor} value={prov.id_proveedor}>
-              {prov.nombre_empresa}
-            </option>
-          ))}
-        </select>
-
-        <input
-          type="date"
-          name="fecha_entrada"
-          value={form.fecha_entrada}
-          onChange={handleChange}
-          required
-          className="border w-full p-2 rounded"
-        />
-
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      <div className="flex justify-between items-center mb-4">
+        <a
+          href="/materiales/entradas/registrar"
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+        >
           Registrar Entrada
-        </button>
+        </a>
+        <a href="/" className="text-blue-600 hover:underline">← Volver al Inicio</a>
+      </div>
 
-        {mensaje && (
-          <p className={`mt-2 text-sm ${mensaje.startsWith('✅') ? 'text-green-600' : 'text-red-600'}`}>{mensaje}</p>
-        )}
-      </form>
-    </main>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-200 rounded shadow">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="p-2 border">ID</th>
+              <th className="p-2 border">Material</th>
+              <th className="p-2 border">Cantidad</th>
+              <th className="p-2 border">Unidad</th>
+              <th className="p-2 border">Proveedor</th>
+              <th className="p-2 border">Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            {entradas.map((entrada) => (
+              <tr key={entrada.id_entrada} className="border-t">
+                <td className="p-2">{entrada.id_entrada}</td>
+                <td className="p-2">{entrada.materiales.nombre}</td>
+                <td className="p-2">{entrada.cantidad}</td>
+                <td className="p-2">{entrada.materiales.unidad_medida}</td>
+                <td className="p-2">{entrada.proveedores?.nombre_empresa ?? '—'}</td>
+                <td className="p-2">
+                  {new Date(entrada.fecha_entrada).toLocaleDateString()}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   )
 }

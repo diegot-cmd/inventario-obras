@@ -22,15 +22,34 @@ export default function Home() {
           Gestiona tus materiales de construcción de forma eficiente: consulta, registra y edita materiales fácilmente.
         </p>
 
-        <div className="flex justify-center gap-4 mt-6">
+        <div className="flex flex-wrap justify-center gap-4 mt-6">
           <Link href="/materiales">
             <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
               Ver Materiales
             </button>
           </Link>
+
           <Link href="/materiales/crear">
             <button className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition">
               Registrar Material
+            </button>
+          </Link>
+
+          <Link href="/materiales/entradas">
+            <button className="bg-yellow-600 text-white px-6 py-2 rounded hover:bg-yellow-700 transition">
+              Registrar Entrada
+            </button>
+          </Link>
+
+          <Link href="/materiales/salidas">
+            <button className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition">
+              Ver Salidas
+            </button>
+          </Link>
+
+          <Link href="/materiales/salidas/registrar">
+            <button className="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700 transition">
+              Registrar Salida
             </button>
           </Link>
         </div>
