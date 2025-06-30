@@ -52,6 +52,11 @@ export default function Home() {
               Registrar Salida
             </button>
           </Link>
+          <Link href="/materiales/proveedores">
+  <button className="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 transition">
+    Ver Proveedores
+  </button>
+</Link>
         </div>
       </main>
     </div>
