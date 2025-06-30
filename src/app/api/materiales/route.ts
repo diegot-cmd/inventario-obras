@@ -45,12 +45,15 @@ export async function POST(req: Request) {
 export async function GET() {
   try {
     const materiales = await prisma.materiales.findMany({
-      orderBy: { id_material: 'desc' },
-    });
+      select: {
+        id_material: true,
+        nombre: true,
+      },
+    })
 
-    return NextResponse.json(materiales);
+    return NextResponse.json(materiales)
   } catch (error) {
-    console.error('Error al obtener materiales:', error);
-    return NextResponse.json({ error: 'Error al obtener materiales' }, { status: 500 });
+    console.error('Error al obtener materiales:', error)
+    return NextResponse.json({ error: 'No se pudo obtener materiales' }, { status: 500 })
   }
 }
