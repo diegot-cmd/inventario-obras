@@ -49,3 +49,19 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'No se pudo registrar entrada' }, { status: 500 })
   }
 }
+export async function GET() {
+  try {
+    const entradas = await prisma.entradasmaterial.findMany({
+      include: {
+        materiales: true,
+        proveedores: true,
+      },
+      orderBy: { fecha_entrada: 'desc' }
+    })
+
+    return NextResponse.json(entradas)
+  } catch (error) {
+    console.error('Error al obtener entradas:', error)
+    return NextResponse.json({ error: 'Error al obtener entradas' }, { status: 500 })
+  }
+}
