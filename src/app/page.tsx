@@ -7,10 +7,10 @@ export default function Home() {
       <main className="text-center space-y-6">
         <Image
           className="mx-auto dark:invert"
-          src="/next.svg"
-          alt="Logo"
+          src="/logo.png"
+          alt="Logo del sistema"
           width={180}
-          height={38}
+          height={60}
           priority
         />
 

@@ -67,17 +67,24 @@ export default function MaterialesPage() {
   };
 
   const handleDelete = async (id: number) => {
-    try {
-      const res = await fetch(`/api/materiales/${id}`, {
-        method: 'DELETE',
-      });
-      if (res.ok) {
-        setMateriales(materiales.filter((m) => m.id_material !== id));
-      }
-    } catch (error) {
-      console.error('Error al eliminar material:', error);
+  const confirmar = confirm('¿Estás seguro que deseas eliminar este material?');
+  if (!confirmar) return;
+
+  try {
+    const res = await fetch(`/api/materiales/${id}`, {
+      method: 'DELETE',
+    });
+    if (res.ok) {
+      setMateriales(materiales.filter((m) => m.id_material !== id));
+      alert('✅ Material eliminado correctamente.');
+    } else {
+      alert('❌ No se pudo eliminar el material.');
     }
-  };
+  } catch (error) {
+    console.error('Error al eliminar material:', error);
+    alert('⚠️ Ocurrió un error al intentar eliminar.');
+  }
+};
 
   const handleEdit = (mat: Material) => {
     setEditId(mat.id_material);
