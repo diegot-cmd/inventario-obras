@@ -21,9 +21,9 @@ export async function POST(req: Request) {
     }
 
     // Convertir fecha sin desfase (asumiendo input tipo "YYYY-MM-DD")
-    const fecha = fecha_registro
-      ? new Date(fecha_registro + 'T00:00:00')
-      : new Date()
+   const fecha = fecha_registro
+  ? new Date(`${fecha_registro}T00:00:00`)
+  : new Date()
 
     // Crear material
     const nuevoMaterial = await prisma.materiales.create({
