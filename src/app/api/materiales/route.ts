@@ -4,14 +4,13 @@ import prisma from '@/lib/db'
 export async function POST(req: Request) {
   try {
     const data = await req.json()
-    const { nombre, descripcion, unidad_medida, precio_unitario, fecha_registro } = data
+    const { nombre, descripcion, unidad_medida, precio_unitario, fecha_registro, stock_actual } = data
 
-    // Validación básica
     if (!nombre || !unidad_medida || !precio_unitario) {
       return NextResponse.json({ error: 'Faltan campos obligatorios' }, { status: 400 })
     }
 
-    // Verificar duplicado por nombre
+    // Validar duplicado
     const existente = await prisma.materiales.findFirst({
       where: { nombre: nombre.trim() },
     })
@@ -22,10 +21,9 @@ export async function POST(req: Request) {
 
     // Corregir desfase de zona horaria
     const fecha = fecha_registro
-      ? new Date(new Date(fecha_registro).getTime() - new Date(fecha_registro).getTimezoneOffset() * 60000)
-      : new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
+      ? new Date(new Date(fecha_registro).getTime() + new Date().getTimezoneOffset() * 60000)
+      : new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000)
 
-    // Guardar material
     const nuevo = await prisma.materiales.create({
       data: {
         nombre: nombre.trim(),
@@ -33,6 +31,7 @@ export async function POST(req: Request) {
         unidad_medida,
         precio_unitario: parseFloat(precio_unitario),
         fecha_registro: fecha,
+        stock_actual: stock_actual ? parseInt(stock_actual) : 0,
       },
     })
 
