@@ -61,12 +61,19 @@ export default function ListaSalidas() {
         </tbody>
       </table>
 
-      <div className="mt-6 text-center">
+      <div className="mt-6 flex justify-between items-center">
         <button
           onClick={() => router.back()}
           className="text-blue-600 underline hover:text-blue-800"
         >
           ← Volver
+        </button>
+
+        <button
+          onClick={() => router.push('/materiales/salidas/registrar')}
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+        >
+          + Registrar salida
         </button>
       </div>
     </div>
