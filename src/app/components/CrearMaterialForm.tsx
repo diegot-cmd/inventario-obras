@@ -1,17 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 
 export default function CrearMaterialForm() {
-  const router = useRouter()
-
   const [form, setForm] = useState({
     nombre: '',
     descripcion: '',
     unidad_medida: '',
     precio_unitario: '',
-    fecha_registro: new Date().toISOString().split('T')[0], // hoy (YYYY-MM-DD)
+    stock_actual: '',
+    fecha_registro: new Date().toISOString().split('T')[0], // hoy
   })
 
   const [mensaje, setMensaje] = useState('')
@@ -29,27 +27,38 @@ export default function CrearMaterialForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const res = await fetch('/api/materiales', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form),
-    })
-
-    const data = await res.json()
-
-    if (!res.ok) {
-      setMensaje(data.error || 'Error al registrar material')
-      setTipo('error')
-    } else {
-      setMensaje('✅ Material registrado correctamente')
-      setTipo('success')
-      setForm({
-        nombre: '',
-        descripcion: '',
-        unidad_medida: '',
-        precio_unitario: '',
-        fecha_registro: new Date().toISOString().split('T')[0],
+    try {
+      const res = await fetch('/api/materiales', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...form,
+          precio_unitario: parseFloat(form.precio_unitario),
+          stock_actual: parseInt(form.stock_actual),
+          fecha_registro: new Date(form.fecha_registro).toISOString(), // evita desfase
+        }),
       })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setMensaje(data.error || 'Error al registrar material')
+        setTipo('error')
+      } else {
+        setMensaje('✅ Material registrado correctamente')
+        setTipo('success')
+        setForm({
+          nombre: '',
+          descripcion: '',
+          unidad_medida: '',
+          precio_unitario: '',
+          stock_actual: '',
+          fecha_registro: new Date().toISOString().split('T')[0],
+        })
+      }
+    } catch (error) {
+      setMensaje('Ocurrió un error al registrar')
+      setTipo('error')
     }
   }
 
@@ -98,6 +107,16 @@ export default function CrearMaterialForm() {
       />
 
       <input
+        type="number"
+        name="stock_actual"
+        value={form.stock_actual}
+        onChange={handleChange}
+        placeholder="Stock inicial"
+        required
+        className="w-full p-2 border rounded"
+      />
+
+      <input
         type="date"
         name="fecha_registro"
         value={form.fecha_registro}
@@ -106,18 +125,12 @@ export default function CrearMaterialForm() {
         className="w-full p-2 border rounded"
       />
 
-      <div className="flex justify-between">
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-          Registrar
-        </button>
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="text-gray-600 underline"
-        >
-          ← Volver
-        </button>
-      </div>
+      <button
+        type="submit"
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full"
+      >
+        Registrar Material
+      </button>
 
       {mensaje && (
         <p className={`text-sm mt-2 ${tipo === 'success' ? 'text-green-600' : 'text-red-600'}`}>
@@ -127,4 +140,3 @@ export default function CrearMaterialForm() {
     </form>
   )
 }
-

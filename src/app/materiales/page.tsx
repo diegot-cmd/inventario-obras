@@ -184,7 +184,16 @@ export default function MaterialesPage() {
                   <td className="p-3">{mat.unidad_medida || '-'}</td>
                   <td className="p-3">S/. {mat.precio_unitario !== null ? parseFloat(mat.precio_unitario.toString()).toFixed(2) : '0.00'}</td>
                   <td className="p-3">{mat.stock_actual ?? 0}</td>
-                  <td className="p-3">{mat.fecha_registro ? new Date(mat.fecha_registro).toLocaleDateString() : 'Sin fecha'}</td>
+                 <td className="p-3">
+  {mat.fecha_registro
+    ? new Intl.DateTimeFormat('es-PE', {
+        timeZone: 'America/Lima',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).format(new Date(mat.fecha_registro))
+    : 'Sin fecha'}
+</td>
                   <td className="p-3 space-x-2">
                     <button onClick={() => handleEdit(mat)} className="text-blue-600 hover:underline">
                       Editar

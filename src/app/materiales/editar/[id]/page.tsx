@@ -43,7 +43,16 @@ export default function ListaMateriales() {
               <td className="border px-2 py-1">{mat.unidad_medida}</td>
               <td className="border px-2 py-1">S/ {mat.precio_unitario.toFixed(2)}</td>
               <td className="border px-2 py-1">{mat.stock_actual}</td>
-              <td className="border px-2 py-1">{mat.fecha_registro?.substring(0, 10)}</td>
+              <td className="p-3">
+  {mat.fecha_registro
+    ? new Intl.DateTimeFormat('es-PE', {
+        timeZone: 'America/Lima',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).format(new Date(mat.fecha_registro))
+    : 'Sin fecha'}
+</td>
               <td className="border px-2 py-1">
                 <a href={`/materiales/editar/${mat.id_material}`} className="text-blue-600">Editar</a>
               </td>
