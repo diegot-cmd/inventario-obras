@@ -13,30 +13,25 @@ export async function POST(req: Request) {
       fecha_registro,
     } = data
 
+    // Validación de campos obligatorios
     if (!nombre || !unidad_medida || !precio_unitario) {
       return NextResponse.json({ error: 'Faltan campos obligatorios' }, { status: 400 })
     }
 
-    // Verificar si ya existe un material con el mismo nombre
-    const existente = await prisma.materiales.findFirst({
-      where: {
-        nombre: nombre.trim(),
-      },
-    })
+    // Validar y construir fecha
+    let fecha: Date
 
-    if (existente) {
-      return NextResponse.json({ error: 'Ya existe un material con ese nombre' }, { status: 409 })
+    if (fecha_registro && typeof fecha_registro === 'string' && !isNaN(Date.parse(fecha_registro))) {
+      // El valor debe venir en formato 'YYYY-MM-DD'
+      fecha = new Date(fecha_registro + 'T00:00:00')
+    } else {
+      // Fecha de hoy sin hora
+      const hoy = new Date()
+      hoy.setHours(0, 0, 0, 0)
+      fecha = hoy
     }
 
-    
- // Evita desfase horario: fuerza 00:00:00 local
-const hoy = new Date();
-hoy.setHours(0, 0, 0, 0);
-
-const fecha = fecha_registro
-  ? new Date(fecha_registro + 'T00:00:00')
-  : hoy;
-
+    // Crear material en la BD
     const nuevoMaterial = await prisma.materiales.create({
       data: {
         nombre: nombre.trim(),
