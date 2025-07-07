@@ -4,15 +4,23 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "GET") {
-    const materiales = await prisma.material.findMany();
+    const materiales = await prisma.materiales.findMany();
     return res.status(200).json(materiales);
   }
 
   if (req.method === "POST") {
-    const { nombre, descripcion, cantidad, unidad, ubicacion } = req.body;
-    const nuevoMaterial = await prisma.material.create({
-      data: { nombre, descripcion, cantidad, unidad, ubicacion },
+    const { nombre, descripcion, unidad_medida, precio_unitario, stock_actual } = req.body;
+
+    const nuevoMaterial = await prisma.materiales.create({
+      data: {
+        nombre,
+        descripcion,
+        unidad_medida,
+        precio_unitario,
+        stock_actual,
+      },
     });
+
     return res.status(201).json(nuevoMaterial);
   }
 
