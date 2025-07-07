@@ -1,5 +1,5 @@
-// app/materiales/salidas/registrar/page.tsx
 'use client'
+
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -11,18 +11,22 @@ export default function RegistrarSalida() {
     destino: '',
     fecha_salida: '',
   })
+
   const [materiales, setMateriales] = useState<{ id_material: number; nombre: string }[]>([])
   const [mensaje, setMensaje] = useState('')
-  const [tipo, setTipo] = useState<'success'|'error'>('success')
+  const [tipo, setTipo] = useState<'success' | 'error'>('success')
 
   useEffect(() => {
     fetch('/api/materiales')
-      .then(r => r.json())
+      .then((r) => r.json())
       .then(setMateriales)
-      .catch(() => { setMensaje('Error al cargar materiales'); setTipo('error') })
+      .catch(() => {
+        setMensaje('Error al cargar materiales')
+        setTipo('error')
+      })
   }, [])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement|HTMLSelectElement>) =>
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm({ ...form, [e.target.name]: e.target.value })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,12 +59,13 @@ export default function RegistrarSalida() {
           required
         >
           <option value="">Selecciona material</option>
-          {materiales.map(m => (
+          {materiales.map((m) => (
             <option key={m.id_material} value={m.id_material}>
               {m.nombre}
             </option>
           ))}
         </select>
+
         <input
           type="number"
           name="cantidad"
@@ -70,6 +75,7 @@ export default function RegistrarSalida() {
           className="w-full border p-2 rounded"
           required
         />
+
         <input
           type="text"
           name="destino"
@@ -78,6 +84,7 @@ export default function RegistrarSalida() {
           onChange={handleChange}
           className="w-full border p-2 rounded"
         />
+
         <input
           type="date"
           name="fecha_salida"
@@ -94,12 +101,13 @@ export default function RegistrarSalida() {
           >
             Registrar
           </button>
-          <a
-            href="/materiales/salidas"
-            className="text-blue-600 hover:underline"
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="text-blue-600 underline"
           >
-            ← Volver al listado
-          </a>
+            ← Volver
+          </button>
         </div>
 
         {mensaje && (
