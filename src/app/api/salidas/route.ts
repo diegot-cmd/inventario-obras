@@ -10,7 +10,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const fecha = new Date(fecha_salida)
+   const fecha = new Date(`${fecha_salida}T12:00:00`) // para salidas
     if (isNaN(fecha.getTime())) {
       return NextResponse.json({ error: 'Fecha inválida' }, { status: 400 })
     }

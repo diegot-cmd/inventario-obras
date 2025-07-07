@@ -20,7 +20,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'El material no existe' }, { status: 404 })
     }
 
-    const fecha = new Date(fecha_entrada)
+  const fecha = new Date(`${fecha_entrada}T12:00:00`) // para entradas
     if (isNaN(fecha.getTime())) {
       return NextResponse.json({ error: 'Fecha inválida' }, { status: 400 })
     }
