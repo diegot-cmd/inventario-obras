@@ -1,26 +1,30 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function CrearMaterialForm() {
+  const router = useRouter()
+
   const [form, setForm] = useState({
     nombre: '',
     descripcion: '',
     unidad_medida: '',
     precio_unitario: '',
-    stock_actual: '',
-    fecha_registro: new Date().toISOString().split('T')[0], // hoy
+    fecha_registro: new Date().toISOString().split('T')[0], // YYYY-MM-DD
   })
 
   const [mensaje, setMensaje] = useState('')
-  const [tipo, setTipo] = useState<'success' | 'error'>('success')
+  const [tipo, setTipo] = useState<'success' | 'error' | ''>('')
 
-  const unidadesMedida = [
-    'Unidad', 'Kilogramo', 'Metro', 'Metro cuadrado', 'Metro cúbico',
-    'Litro', 'Galón', 'Pieza', 'Caja', 'Bolsa', 'Tambor',
+  const unidades = [
+    'Unidad', 'Kilogramo', 'Metro', 'Metro cuadrado', 'Metro cúbico', 'Litro', 'Caja', 'Bolsa',
+    'Galón', 'Paquete', 'Juego', 'Docena', 'Tonelada', 'Tambor', 'Balde'
   ]
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
@@ -31,12 +35,7 @@ export default function CrearMaterialForm() {
       const res = await fetch('/api/materiales', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...form,
-          precio_unitario: parseFloat(form.precio_unitario),
-          stock_actual: parseInt(form.stock_actual),
-          fecha_registro: new Date(form.fecha_registro).toISOString(), // evita desfase
-        }),
+        body: JSON.stringify(form),
       })
 
       const data = await res.json()
@@ -52,34 +51,34 @@ export default function CrearMaterialForm() {
           descripcion: '',
           unidad_medida: '',
           precio_unitario: '',
-          stock_actual: '',
           fecha_registro: new Date().toISOString().split('T')[0],
         })
       }
     } catch (error) {
-      setMensaje('Ocurrió un error al registrar')
+      console.error(error)
+      setMensaje('Error inesperado')
       setTipo('error')
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-lg mx-auto">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <input
         type="text"
         name="nombre"
+        placeholder="Nombre del material"
         value={form.nombre}
         onChange={handleChange}
-        placeholder="Nombre del material"
         required
-        className="w-full p-2 border rounded"
+        className="w-full border p-2 rounded"
       />
 
       <textarea
         name="descripcion"
+        placeholder="Descripción (opcional)"
         value={form.descripcion}
         onChange={handleChange}
-        placeholder="Descripción (opcional)"
-        className="w-full p-2 border rounded"
+        className="w-full border p-2 rounded"
       />
 
       <select
@@ -87,33 +86,25 @@ export default function CrearMaterialForm() {
         value={form.unidad_medida}
         onChange={handleChange}
         required
-        className="w-full p-2 border rounded"
+        className="w-full border p-2 rounded"
       >
         <option value="">Seleccione unidad de medida</option>
-        {unidadesMedida.map((u) => (
-          <option key={u} value={u}>{u}</option>
+        {unidades.map((u) => (
+          <option key={u} value={u}>
+            {u}
+          </option>
         ))}
       </select>
 
       <input
         type="number"
+        step="0.01"
         name="precio_unitario"
+        placeholder="Precio unitario"
         value={form.precio_unitario}
         onChange={handleChange}
-        placeholder="Precio unitario"
-        step="0.01"
         required
-        className="w-full p-2 border rounded"
-      />
-
-      <input
-        type="number"
-        name="stock_actual"
-        value={form.stock_actual}
-        onChange={handleChange}
-        placeholder="Stock inicial"
-        required
-        className="w-full p-2 border rounded"
+        className="w-full border p-2 rounded"
       />
 
       <input
@@ -122,18 +113,27 @@ export default function CrearMaterialForm() {
         value={form.fecha_registro}
         onChange={handleChange}
         required
-        className="w-full p-2 border rounded"
+        className="w-full border p-2 rounded"
       />
 
-      <button
-        type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full"
-      >
-        Registrar Material
-      </button>
+      <div className="flex justify-between">
+        <button
+          type="submit"
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+        >
+          Registrar Material
+        </button>
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="text-blue-600 underline"
+        >
+          ← Volver
+        </button>
+      </div>
 
       {mensaje && (
-        <p className={`text-sm mt-2 ${tipo === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+        <p className={`text-sm ${tipo === 'success' ? 'text-green-600' : 'text-red-600'}`}>
           {mensaje}
         </p>
       )}
