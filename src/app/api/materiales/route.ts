@@ -14,34 +14,42 @@ export async function GET() {
 
 // POST → Crear nuevo material
 export async function POST(req: Request) {
-  const data = await req.json();
+  const data = await req.json()
+  const { nombre, descripcion, unidad_medida, precio_unitario, fecha_registro } = data
 
-  const nombre = data.nombre || '';
-  const descripcion = data.descripcion || '';
-  const unidad_medida = data.unidad_medida || 'Und';
-  const precio_unitario = isNaN(Number(data.precio_unitario)) ? 0 : Number(data.precio_unitario);
-  const stock_actual = isNaN(Number(data.stock_actual)) ? 0 : Number(data.stock_actual);
-  const fecha = data.fecha_registro ? new Date(data.fecha_registro) : new Date();
-
-  // Validaciones básicas
-  if (!nombre || !unidad_medida) {
-    return NextResponse.json({ error: 'Campos obligatorios faltantes' }, { status: 400 });
+  if (!nombre || !unidad_medida || !precio_unitario) {
+    return NextResponse.json({ error: 'Faltan campos obligatorios' }, { status: 400 })
   }
 
+  // Validar si ya existe el material
+  const existente = await prisma.materiales.findFirst({
+    where: {
+      nombre: {
+        equals: nombre,
+      
+      },
+    },
+  })
+
+  if (existente) {
+    return NextResponse.json({ error: 'El material ya existe' }, { status: 400 })
+  }
+
+  const fecha = fecha_registro ? new Date(fecha_registro) : new Date()
+
   try {
-    const nuevo = await prisma.materiales.create({
+    const nuevoMaterial = await prisma.materiales.create({
       data: {
         nombre,
         descripcion,
         unidad_medida,
-        precio_unitario,
-        stock_actual,
+        precio_unitario: parseFloat(precio_unitario),
         fecha_registro: fecha,
       },
-    });
-    return NextResponse.json(nuevo);
+    })
+    return NextResponse.json(nuevoMaterial)
   } catch (error) {
-    console.error('Error al crear material:', error);
-    return NextResponse.json({ error: 'No se pudo registrar el material' }, { status: 500 });
+    console.error('Error al registrar material:', error)
+    return NextResponse.json({ error: 'No se pudo registrar el material' }, { status: 500 })
   }
 }
