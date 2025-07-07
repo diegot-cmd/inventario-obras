@@ -21,16 +21,17 @@ export async function POST(req: Request) {
     // Validar y construir fecha
     let fecha: Date
 
-    if (fecha_registro && typeof fecha_registro === 'string' && !isNaN(Date.parse(fecha_registro))) {
-      // El valor debe venir en formato 'YYYY-MM-DD'
-      fecha = new Date(fecha_registro + 'T00:00:00')
-    } else {
-      // Fecha de hoy sin hora
-      const hoy = new Date()
-      hoy.setHours(0, 0, 0, 0)
-      fecha = hoy
-    }
-
+if (
+  fecha_registro &&
+  typeof fecha_registro === 'string' &&
+  /^\d{4}-\d{2}-\d{2}$/.test(fecha_registro)
+) {
+  fecha = new Date(fecha_registro + 'T00:00:00')
+} else {
+  const hoy = new Date()
+  hoy.setHours(0, 0, 0, 0)
+  fecha = hoy
+}
     // Crear material en la BD
     const nuevoMaterial = await prisma.materiales.create({
       data: {

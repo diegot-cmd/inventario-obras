@@ -112,7 +112,6 @@ export default function CrearMaterialForm() {
         name="fecha_registro"
         value={form.fecha_registro}
         onChange={handleChange}
-        required
         className="w-full border p-2 rounded"
       />
 
