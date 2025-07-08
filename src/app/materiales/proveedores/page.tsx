@@ -121,7 +121,7 @@ export default function ProveedoresPage() {
       </table>
 
       <div className="mt-4">
-        <a href="/" className="text-blue-600 underline">← Volver al Inicio</a>
+        <a href="/" className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">← Volver al Inicio</a>
       </div>
     </div>
   )

@@ -125,7 +125,7 @@ export default function CrearMaterialForm() {
         <button
           type="button"
           onClick={() => router.back()}
-          className="text-blue-600 underline"
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
         >
           ← Volver
         </button>

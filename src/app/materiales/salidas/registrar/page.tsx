@@ -97,14 +97,14 @@ export default function RegistrarSalida() {
         <div className="flex justify-between mt-4">
           <button
             type="submit"
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
           >
             Registrar
           </button>
           <button
             type="button"
             onClick={() => router.back()}
-            className="text-blue-600 underline"
+            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
           >
             ← Volver
           </button>

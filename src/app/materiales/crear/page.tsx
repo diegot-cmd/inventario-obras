@@ -74,7 +74,7 @@ export default function CrearMaterialPage() {
     <div className="p-6 max-w-2xl mx-auto">
       <button
         onClick={() => router.back()}
-        className="mb-4 px-4 py-2 bg-gray-300 hover:bg-gray-400 text-black rounded"
+        className="mb-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
       >
         ← Volver
       </button>
@@ -147,7 +147,7 @@ export default function CrearMaterialPage() {
           <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
             Registrar Material
           </button>
-          <button type="button" onClick={() => router.back()} className="text-blue-600 hover:underline">
+          <button type="button" onClick={() => router.back()} className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
             Cancelar
           </button>
         </div>
