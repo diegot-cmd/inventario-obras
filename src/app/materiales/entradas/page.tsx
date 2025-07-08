@@ -38,7 +38,7 @@ export default function ListaEntradas() {
         >
           Registrar Entrada
         </a>
-        <a href="/" className="text-blue-600 hover:underline">← Volver al Inicio</a>
+        <a href="/" className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">← Volver al Inicio</a>
       </div>
 
       <div className="overflow-x-auto">
@@ -62,7 +62,7 @@ export default function ListaEntradas() {
                 <td className="p-2">{entrada.materiales.unidad_medida}</td>
                 <td className="p-2">{entrada.proveedores?.nombre_empresa ?? '—'}</td>
                 <td className="p-2">
-                  {new Date(entrada.fecha_entrada).toLocaleDateString()}
+                  {entrada.fecha_entrada.split('T')[0]}
                 </td>
               </tr>
             ))}

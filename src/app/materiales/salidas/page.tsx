@@ -54,7 +54,7 @@ export default function ListaSalidas() {
               <td className="border px-4 py-2">{salida.cantidad}</td>
               <td className="border px-4 py-2">{salida.destino || '-'}</td>
               <td className="border px-4 py-2">
-                {new Date(salida.fecha_salida).toLocaleDateString()}
+                {salida.fecha_salida.split('T')[0]}
               </td>
             </tr>
           ))}
@@ -64,7 +64,7 @@ export default function ListaSalidas() {
       <div className="mt-6 flex justify-between items-center">
         <button
           onClick={() => router.back()}
-          className="text-blue-600 underline hover:text-blue-800"
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
         >
           ← Volver
         </button>

@@ -128,7 +128,7 @@ export default function MaterialesPage() {
   }, []);
 
   return (
-    <main className="p-6"><button onClick={() => router.push('/')} className="mb-4 inline-block px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
+    <main className="p-6"><button onClick={() => router.push('/')} className="mb-4 inline-block px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
   ← Volver al Inicio
 </button>
       <h1 className="text-2xl font-bold mb-4">Inventario de Materiales</h1>
@@ -186,12 +186,7 @@ export default function MaterialesPage() {
                   <td className="p-3">{mat.stock_actual ?? 0}</td>
                  <td className="p-3">
   {mat.fecha_registro
-    ? new Intl.DateTimeFormat('es-PE', {
-        timeZone: 'America/Lima',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      }).format(new Date(mat.fecha_registro))
+    ? mat.fecha_registro.split('T')[0] // Formatear fecha a YYYY-MM-DD
     : 'Sin fecha'}
 </td>
                   <td className="p-3 space-x-2">
