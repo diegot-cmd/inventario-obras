@@ -53,3 +53,21 @@ model salidasmaterial {
   @@index([id_material], map: "id_material")
 
 }
+model usuario {
+  id_usuario Int       @id @default(autoincrement())
+  nombre     String    @db.VarChar(100)
+  email      String    @unique @db.VarChar(150)
+  password   String    @db.VarChar(255)
+  role       String?   @db.VarChar(50)
+  creado_en  DateTime  @default(now())
+  logins     login[]
+}
+
+model login {
+  id_login   Int       @id @default(autoincrement())
+  id_usuario Int
+  exitoso    Boolean
+  ip         String?   @db.VarChar(100)
+  fecha      DateTime  @default(now())
+  usuario    usuario   @relation(fields: [id_usuario], references: [id_usuario])
+}

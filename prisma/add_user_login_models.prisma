@@ -1,0 +1,22 @@
+// Agrega estos modelos a prisma/schema.prisma (fusiona manualmente)
+model Usuario {
+  id_usuario  Int      @id @default(autoincrement())
+  nombre      String
+  email       String   @unique
+  password    String
+  role        String? 
+  creado_en   DateTime @default(now())
+  logins      Login[]
+}
+
+model Login {
+  id_login    Int      @id @default(autoincrement())
+  usuarioId   Int
+  exitoso     Boolean  @default(false)
+  ip          String? 
+  creado_en   DateTime @default(now())
+
+  usuario     Usuario  @relation(fields: [usuarioId], references: [id_usuario])
+
+  @@index([usuarioId])
+}
