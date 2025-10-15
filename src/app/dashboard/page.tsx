@@ -1,12 +1,11 @@
-
 import DashboardClient from './DashboardClient'
 import { cookies } from 'next/headers'
 import { verifyToken, JwtUser } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
   // Obtener cookies en el servidor
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   const token = cookieStore.get('token')?.value
 
   // Verificar JWT
