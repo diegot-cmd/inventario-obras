@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+
+const JWT_SECRET = process.env.JWT_SECRET || 'clave_secreta_super_segura'
 
 export async function POST(req: Request) {
   const data = await req.json()
@@ -13,38 +16,35 @@ export async function POST(req: Request) {
   try {
     const usuario = await prisma.usuario.findUnique({ where: { email } })
     if (!usuario) {
-      // registrar intento fallido si se desea
       return NextResponse.json({ error: 'Credenciales inválidas' }, { status: 401 })
     }
 
     const match = await bcrypt.compare(password, usuario.password)
-    const ip = (req as any).headers?.get?.('x-forwarded-for') || (req as any).headers?.get?.('x-real-ip') || undefined
-
-    await prisma.login.create({
-  data: {
-    exitoso: match,
-    ip: ip ?? undefined,
-    usuario: {
-      connect: { id_usuario: usuario.id_usuario },
-    },
-  },
-})
-
-
     if (!match) {
       return NextResponse.json({ error: 'Credenciales inválidas' }, { status: 401 })
     }
 
-    // No se genera token aquí (puedes añadir JWT si lo necesitas)
-    const safeUser = {
-      id_usuario: usuario.id_usuario,
-      nombre: usuario.nombre,
-      email: usuario.email,
-      role: usuario.role,
-      creado_en: usuario.creado_en,
-    }
+    // 🔐 Generar token con los datos del usuario
+    const token = jwt.sign(
+      {
+        id_usuario: usuario.id_usuario,
+        nombre: usuario.nombre,
+        email: usuario.email,
+        role: usuario.role,
+      },
+      JWT_SECRET,
+      { expiresIn: '1h' }
+    )
 
-    return NextResponse.json({ message: 'Login exitoso', usuario: safeUser })
+    // Guardar token en cookie
+    const res = NextResponse.json({ message: 'Login exitoso' })
+    res.cookies.set('token', token, {
+      httpOnly: true,
+      path: '/',
+      maxAge: 60 * 60, // 1 hora
+    })
+
+    return res
   } catch (error) {
     console.error('Error en login:', error)
     return NextResponse.json({ error: 'Error en autenticación' }, { status: 500 })
