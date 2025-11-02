@@ -1,46 +1,53 @@
-import { NextResponse } from 'next/server'
-import prisma from '@/lib/db'
+import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/db'
 
-// Actualizar proveedor
 export async function PUT(
-  req: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const id = Number(params.id)
-  const data = await req.json()
-
   try {
-    const proveedorActualizado = await prisma.proveedores.update({
+    const id = parseInt(params.id)
+    const body = await request.json()
+    const { nombre_empresa, contacto, telefono, email, direccion } = body
+
+    const proveedor = await prisma.proveedores.update({
       where: { id_proveedor: id },
       data: {
-        nombre_empresa: data.nombre_empresa,
-        contacto: data.contacto || null,
-        telefono: data.telefono || null,
-        email: data.email || null,
-        direccion: data.direccion || null,
+        nombre_empresa,
+        contacto,
+        telefono,
+        email,
+        direccion,
       },
     })
-    return NextResponse.json(proveedorActualizado)
+
+    return NextResponse.json(proveedor)
   } catch (error) {
     console.error('Error al actualizar proveedor:', error)
-    return NextResponse.json({ error: 'No se pudo actualizar' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Error al actualizar proveedor' },
+      { status: 500 }
+    )
   }
 }
 
-// Eliminar proveedor
 export async function DELETE(
-  _req: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const id = Number(params.id)
-
   try {
+    const id = parseInt(params.id)
+
     await prisma.proveedores.delete({
       where: { id_proveedor: id },
     })
+
     return NextResponse.json({ message: 'Proveedor eliminado' })
   } catch (error) {
     console.error('Error al eliminar proveedor:', error)
-    return NextResponse.json({ error: 'No se pudo eliminar' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Error al eliminar proveedor' },
+      { status: 500 }
+    )
   }
 }

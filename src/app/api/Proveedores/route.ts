@@ -1,20 +1,28 @@
-import { NextResponse } from 'next/server'
-import prisma from '@/lib/db'
+import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/db'
 
 export async function GET() {
-  const proveedores = await prisma.proveedores.findMany()
-  return NextResponse.json(proveedores)
+  try {
+    const proveedores = await prisma.proveedores.findMany({
+      orderBy: {
+        nombre_empresa: 'asc',
+      },
+    })
+    return NextResponse.json(proveedores)
+  } catch (error) {
+    console.error('Error al obtener proveedores:', error)
+    return NextResponse.json(
+      { error: 'Error al obtener proveedores' },
+      { status: 500 }
+    )
+  }
 }
 
-export async function POST(req: Request) {
-  const data = await req.json()
-  const { nombre_empresa, contacto, telefono, email, direccion } = data
-
-  if (!nombre_empresa) {
-    return NextResponse.json({ error: 'El nombre de la empresa es obligatorio' }, { status: 400 })
-  }
-
+export async function POST(request: NextRequest) {
   try {
+    const body = await request.json()
+    const { nombre_empresa, contacto, telefono, email, direccion } = body
+
     const proveedor = await prisma.proveedores.create({
       data: {
         nombre_empresa,
@@ -24,9 +32,13 @@ export async function POST(req: Request) {
         direccion,
       },
     })
+
     return NextResponse.json(proveedor)
   } catch (error) {
     console.error('Error al crear proveedor:', error)
-    return NextResponse.json({ error: 'No se pudo registrar el proveedor' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Error al crear proveedor' },
+      { status: 500 }
+    )
   }
 }
