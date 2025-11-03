@@ -1,10 +1,9 @@
-'use client'
+"use client"
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function LoginPage() {
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -19,6 +18,8 @@ export default function LoginPage() {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        // asegurarse de que la cookie enviada por el servidor sea aceptada por el navegador
+        credentials: 'same-origin',
         body: JSON.stringify({ email, password }),
       })
 
@@ -30,8 +31,9 @@ export default function LoginPage() {
         return
       }
 
-      // Si todo sale bien → redirigir al dashboard
-      router.push('/dashboard')
+  // Si todo sale bien → navegar a la página principal '/'.
+  // Usamos navegación completa para asegurar que la cookie HttpOnly esté disponible en la carga del servidor.
+  window.location.href = '/'
     } catch (err) {
       setError('Error del servidor')
     } finally {
@@ -40,42 +42,62 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex h-screen items-center justify-center bg-gray-100">
-      <form
-        onSubmit={handleLogin}
-        className="bg-white shadow-lg p-8 rounded-2xl w-80 space-y-4"
-      >
-        <h1 className="text-2xl font-bold text-center text-blue-700">
-          Iniciar Sesión
-        </h1>
-
-        {error && <p className="text-red-500 text-center text-sm">{error}</p>}
-
-        <input
-          type="email"
-          placeholder="Correo electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full border p-2 rounded focus:outline-blue-500"
-          required
-        />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full border p-2 rounded focus:outline-blue-500"
-          required
-        />
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition disabled:opacity-50"
+    <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="w-full max-w-md mx-4">
+        <form
+          onSubmit={handleLogin}
+          className="bg-white border border-black shadow-lg p-8 rounded-2xl w-full space-y-6"
         >
-          {loading ? 'Ingresando...' : 'Entrar'}
-        </button>
-      </form>
+          <div className="flex flex-col items-center gap-3">
+            <img src="/logo.png" alt="Logo" className="w-36 h-auto" />
+            <h1 className="text-2xl font-extrabold text-center text-black">Iniciar Sesión</h1>
+          </div>
+
+          {error && <p className="text-red-600 text-center text-sm">{error}</p>}
+
+          <div className="flex flex-col gap-3">
+            <label className="text-sm text-black/80">Correo electrónico</label>
+            <input
+              type="email"
+              placeholder="tu@correo.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent" 
+                  required
+            />
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <label className="text-sm text-black/80">Contraseña</label>
+            <input
+              type="password"
+              placeholder="********"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent" 
+                   required
+            />
+          </div>
+
+          <div className="flex items-center justify-between text-sm">
+            <label className="flex items-center gap-2">
+              <input type="checkbox" className="w-4 h-4" />
+              <span className="text-black/70">Recuérdame</span>
+            </label>
+            <Link href="/register" className="text-black/70 hover:underline">Crear cuenta</Link>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-black text-white py-3 rounded-lg hover:opacity-95 transition disabled:opacity-50"
+          >
+            {loading ? 'Ingresando...' : 'Entrar'}
+          </button>
+
+          <div className="text-center text-sm text-black/60">© Sistema de Inventario</div>
+        </form>
+      </div>
     </div>
   )
 }

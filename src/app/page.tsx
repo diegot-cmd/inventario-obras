@@ -1,7 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
+import { cookies } from 'next/headers'
+import { verifyToken } from '@/lib/auth'
+import { redirect } from 'next/navigation'
 
-export default function Home() {
+export default async function Home() {
+  // Verificar token en servidor y redirigir a /login si no está autenticado
+  const cookieStore = await cookies()
+  const token = cookieStore.get('token')?.value
+  const user = token ? verifyToken(token) : null
+  if (!user) redirect('/login')
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}

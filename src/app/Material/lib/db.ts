@@ -1,5 +1,4 @@
-// src/lib/db.ts
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-export default prisma;
+// Re-export the singleton Prisma client
+import prisma from '@/lib/prisma'
+export default prisma
+export { prisma }

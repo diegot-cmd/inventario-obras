@@ -33,12 +33,13 @@ export default function DashboardClient({ user }: DashboardClientProps) {
     const res = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
       body: JSON.stringify({ email: loginEmail, password: loginPassword }),
     })
     const data = await res.json()
     if (res.ok) {
-      document.cookie = `token=${data.token}; path=/;`
-      router.push('/dashboard')
+      // Recarga completa para que la cookie HttpOnly (puesta por el servidor) sea leída en la carga del servidor
+      window.location.href = '/'
     } else {
       alert(data.error)
     }
@@ -81,14 +82,14 @@ export default function DashboardClient({ user }: DashboardClientProps) {
           placeholder="Email"
           value={loginEmail}
           onChange={(e) => setLoginEmail(e.target.value)}
-          className="border p-2 mr-2 mb-2"
+          className="border p-2 mr-2 mb-2 font-semibold placeholder-black/50"
         />
         <input
           type="password"
           placeholder="Password"
           value={loginPassword}
           onChange={(e) => setLoginPassword(e.target.value)}
-          className="border p-2 mr-2 mb-2"
+          className="border p-2 mr-2 mb-2 font-semibold placeholder-black/50"
         />
         <button
           onClick={handleLogin}
