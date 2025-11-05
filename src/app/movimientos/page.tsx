@@ -204,7 +204,7 @@ export default function MovimientosPage() {
           {/* Ver Entradas */}
           {activeTab === 'entradas' && (
             <div>
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+              <h2 className="text-2xl font-bold text-black mb-6 flex items-center gap-3">
                 <span className="text-2xl">📥</span>
                 Entradas de Materiales
               </h2>
@@ -250,7 +250,7 @@ export default function MovimientosPage() {
           {/* Ver Salidas */}
           {activeTab === 'salidas' && (
             <div>
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+              <h2 className="text-2xl font-bold text-black mb-6 flex items-center gap-3">
                 <span className="text-2xl">📤</span>
                 Salidas de Materiales
               </h2>
@@ -268,9 +268,9 @@ export default function MovimientosPage() {
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-white">
+                  <table className="w-full text-black">
                     <thead>
-                      <tr className="border-b border-white/20">
+                      <tr className="border-b border-black/20">
                         <th className="text-left py-4 px-2">Material</th>
                         <th className="text-left py-4 px-2">Cantidad</th>
                         <th className="text-left py-4 px-2">Destino</th>
@@ -279,7 +279,7 @@ export default function MovimientosPage() {
                     </thead>
                     <tbody>
                       {salidas.map((salida) => (
-                        <tr key={salida.id_salida} className="border-b border-white/10 hover:bg-white/5 transition-colors">
+                        <tr key={salida.id_salida} className="border-b border-black/10 hover:bg-black/5 transition-colors">
                           <td className="py-4 px-2 font-medium">{salida.materiales.nombre}</td>
                           <td className="py-4 px-2">{salida.cantidad}</td>
                           <td className="py-4 px-2">{salida.destino || 'Sin destino'}</td>
