@@ -41,7 +41,8 @@ describe('API - Usuarios CRUD', () => {
 
       (prisma.usuario.findMany as jest.Mock).mockResolvedValue(mockUsuarios);
 
-      const response = await GET();
+      const request = new Request('http://localhost:3000/api/usuarios');
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);

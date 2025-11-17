@@ -2,7 +2,7 @@
 jest.mock('@/lib/prisma', () => ({
   __esModule: true,
   default: {
-    material: {
+    materiales: {
       findMany: jest.fn(),
       findUnique: jest.fn(),
       create: jest.fn(),
@@ -28,15 +28,15 @@ describe('API - Materiales CRUD', () => {
         { id_material: 2, nombre: 'Arena', stock_actual: 50 },
       ];
 
-      (prisma.material.findMany as jest.Mock).mockResolvedValue(mockMateriales);
+      (prisma.materiales.findMany as jest.Mock).mockResolvedValue(mockMateriales);
 
       const request = new Request('http://localhost:3000/api/materiales');
-      const response = await GET(request);
+      const response = await GET();
       const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data).toEqual(mockMateriales);
-      expect(prisma.material.findMany).toHaveBeenCalled();
+      expect(prisma.materiales.findMany).toHaveBeenCalled();
     });
   });
 
@@ -50,7 +50,7 @@ describe('API - Materiales CRUD', () => {
         stock_actual: 1000,
       };
 
-      (prisma.material.create as jest.Mock).mockResolvedValue({
+      (prisma.materiales.create as jest.Mock).mockResolvedValue({
         id_material: 3,
         ...nuevoMaterial,
       });
@@ -66,7 +66,7 @@ describe('API - Materiales CRUD', () => {
 
       expect(response.status).toBe(201);
       expect(data.nombre).toBe('Ladrillo');
-      expect(prisma.material.create).toHaveBeenCalled();
+      expect(prisma.materiales.create).toHaveBeenCalled();
     });
 
     it('debería retornar error si falta el nombre', async () => {
@@ -91,7 +91,7 @@ describe('API - Materiales CRUD', () => {
         precio_unitario: 25.5,
       };
 
-      (prisma.material.update as jest.Mock).mockResolvedValue({
+      (prisma.materiales.update as jest.Mock).mockResolvedValue({
         id_material: 1,
         ...materialActualizado,
       });
@@ -107,7 +107,7 @@ describe('API - Materiales CRUD', () => {
 
       expect(response.status).toBe(200);
       expect(data.nombre).toBe('Cemento Sol');
-      expect(prisma.material.update).toHaveBeenCalledWith(
+      expect(prisma.materiales.update).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { id_material: 1 },
         })
@@ -117,7 +117,7 @@ describe('API - Materiales CRUD', () => {
 
   describe('DELETE /api/materiales/[id]', () => {
     it('debería eliminar un material', async () => {
-      (prisma.material.delete as jest.Mock).mockResolvedValue({
+      (prisma.materiales.delete as jest.Mock).mockResolvedValue({
         id_material: 1,
         nombre: 'Cemento',
       });
@@ -131,7 +131,7 @@ describe('API - Materiales CRUD', () => {
 
       expect(response.status).toBe(200);
       expect(data.message).toContain('eliminado');
-      expect(prisma.material.delete).toHaveBeenCalledWith({
+      expect(prisma.materiales.delete).toHaveBeenCalledWith({
         where: { id_material: 1 },
       });
     });
