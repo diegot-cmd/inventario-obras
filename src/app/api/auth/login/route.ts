@@ -14,6 +14,15 @@ export async function POST(req: Request) {
     const usuario = await prisma.usuario.findUnique({ where: { email } })
     if (!usuario) return NextResponse.json({ error: 'Credenciales inválidas' }, { status: 401 })
 
+    // Verificar si el usuario está aprobado
+    if (usuario.estado !== 'aprobado') {
+      return NextResponse.json({ 
+        error: usuario.estado === 'pendiente' 
+          ? 'Tu cuenta está pendiente de aprobación por el administrador' 
+          : 'Tu cuenta ha sido rechazada. Contacta al administrador' 
+      }, { status: 403 })
+    }
+
     // Compatibilidad: si la contraseña en la BD está en texto plano (inserciones manuales),
     // permitir el login y luego migrar a bcrypt (rehash y update).
     let match = false

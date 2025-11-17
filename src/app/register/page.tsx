@@ -6,7 +6,6 @@ export default function RegisterPage() {
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("Trabajador")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
@@ -19,7 +18,7 @@ export default function RegisterPage() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombre, email, password, role }),
+        body: JSON.stringify({ nombre, email, password, role: "Trabajador" }),
       })
 
       if (!res.ok) {
@@ -79,18 +78,17 @@ export default function RegisterPage() {
                  minLength={6} required />
           </div>
 
-          <div className="flex items-center justify-between">
-            <select value={role} onChange={(e)=>setRole(e.target.value)} className="border border-black/20 p-2 rounded text-black">
-              <option value="Trabajador">Trabajador</option>
-              <option value="Gerente">Gerente</option>
-              <option value="Admin">Admin</option>
-            </select>
+          <div className="flex items-center justify-end">
             <Link href="/login" className="text-black/70 hover:underline text-sm">¿Ya tienes cuenta?</Link>
           </div>
 
           <button type="submit" disabled={loading} className="w-full bg-black text-white py-3 rounded-lg hover:opacity-95 transition disabled:opacity-50">
             {loading ? 'Creando...' : 'Crear cuenta'}
           </button>
+          
+          <p className="text-xs text-center text-gray-500 mt-2">
+            Al registrarte, automáticamente serás asignado como Trabajador
+          </p>
         </form>
       </div>
     </div>
