@@ -87,104 +87,117 @@ export default function ReportesPage() {
   };
 
   const descargarExcel = () => {
-    if (!reportes) return;
+    if (!reportes) {
+      alert('No hay datos para exportar');
+      return;
+    }
 
-    const wb = XLSX.utils.book_new();
+    try {
+      console.log('Iniciando descarga de Excel...');
+      const wb = XLSX.utils.book_new();
 
-    // Hoja 1: Estadísticas Generales
-    const estadisticas = [
+      // Hoja 1: Estadísticas Generales
+      const estadisticas = [
       ['Concepto', 'Valor'],
       ['Total Materiales', reportes.estadisticas_generales.total_materiales],
       ['Total Entradas', reportes.estadisticas_generales.total_entradas],
       ['Total Salidas', reportes.estadisticas_generales.total_salidas],
       ['Total Proveedores', reportes.estadisticas_generales.total_proveedores],
-      ['Valor Total Inventario', `S/. ${parseFloat(reportes.estadisticas_generales.valor_total_inventario).toFixed(2)}`],
-    ];
-    const ws1 = XLSX.utils.aoa_to_sheet(estadisticas);
-    XLSX.utils.book_append_sheet(wb, ws1, 'Estadísticas Generales');
-
-    // Hoja 2: Stock Bajo
-    if (reportes.stock_bajo.length > 0) {
-      const stockBajo = [
-        ['ID Material', 'Nombre', 'Stock Actual', 'Unidad Medida'],
-        ...reportes.stock_bajo.map(m => [m.id_material, m.nombre, m.stock_actual, m.unidad_medida])
+        ['Valor Total Inventario', `S/. ${parseFloat(reportes.estadisticas_generales.valor_total_inventario).toFixed(2)}`],
       ];
-      const ws2 = XLSX.utils.aoa_to_sheet(stockBajo);
-      XLSX.utils.book_append_sheet(wb, ws2, 'Stock Bajo');
-    }
+      const ws1 = XLSX.utils.aoa_to_sheet(estadisticas);
+      XLSX.utils.book_append_sheet(wb, ws1, 'Estadísticas Generales');
 
-    // Hoja 3: Materiales Más Utilizados
-    if (reportes.materiales_mas_utilizados.length > 0) {
-      const masUtilizados = [
-        ['ID Material', 'Nombre', 'Unidad Medida', 'Cantidad Salidas'],
-        ...reportes.materiales_mas_utilizados.map(m => [m.id_material, m.nombre, m.unidad_medida, m.cantidad_salidas])
-      ];
-      const ws3 = XLSX.utils.aoa_to_sheet(masUtilizados);
-      XLSX.utils.book_append_sheet(wb, ws3, 'Más Utilizados');
-    }
+      // Hoja 2: Stock Bajo
+      if (reportes.stock_bajo.length > 0) {
+        const stockBajo = [
+          ['ID Material', 'Nombre', 'Stock Actual', 'Unidad Medida'],
+          ...reportes.stock_bajo.map(m => [m.id_material, m.nombre, m.stock_actual, m.unidad_medida])
+        ];
+        const ws2 = XLSX.utils.aoa_to_sheet(stockBajo);
+        XLSX.utils.book_append_sheet(wb, ws2, 'Stock Bajo');
+      }
 
-    // Hoja 4: Proveedores Frecuentes
-    if (reportes.proveedores_frecuentes.length > 0) {
-      const proveedores = [
-        ['ID Proveedor', 'Nombre Empresa', 'Contacto', 'Cantidad Entradas'],
-        ...reportes.proveedores_frecuentes.map(p => [p.id_proveedor, p.nombre_empresa, p.contacto || 'Sin contacto', p.cantidad_entradas])
-      ];
-      const ws4 = XLSX.utils.aoa_to_sheet(proveedores);
-      XLSX.utils.book_append_sheet(wb, ws4, 'Proveedores Frecuentes');
-    }
+      // Hoja 3: Materiales Más Utilizados
+      if (reportes.materiales_mas_utilizados.length > 0) {
+        const masUtilizados = [
+          ['ID Material', 'Nombre', 'Unidad Medida', 'Cantidad Salidas'],
+          ...reportes.materiales_mas_utilizados.map(m => [m.id_material, m.nombre, m.unidad_medida, m.cantidad_salidas])
+        ];
+        const ws3 = XLSX.utils.aoa_to_sheet(masUtilizados);
+        XLSX.utils.book_append_sheet(wb, ws3, 'Más Utilizados');
+      }
 
-    // Hoja 5: Top Materiales por Valor
-    if (reportes.top_materiales_por_valor.length > 0) {
-      const topValor = [
-        ['ID Material', 'Nombre', 'Stock Actual', 'Precio Unitario', 'Unidad Medida', 'Valor Total'],
-        ...reportes.top_materiales_por_valor.map(m => [
-          m.id_material,
-          m.nombre,
-          m.stock_actual,
-          `S/. ${m.precio_unitario.toFixed(2)}`,
-          m.unidad_medida,
-          `S/. ${m.valor_total.toFixed(2)}`
-        ])
-      ];
-      const ws5 = XLSX.utils.aoa_to_sheet(topValor);
-      XLSX.utils.book_append_sheet(wb, ws5, 'Top por Valor');
-    }
+      // Hoja 4: Proveedores Frecuentes
+      if (reportes.proveedores_frecuentes.length > 0) {
+        const proveedores = [
+          ['ID Proveedor', 'Nombre Empresa', 'Contacto', 'Cantidad Entradas'],
+          ...reportes.proveedores_frecuentes.map(p => [p.id_proveedor, p.nombre_empresa, p.contacto || 'Sin contacto', p.cantidad_entradas])
+        ];
+        const ws4 = XLSX.utils.aoa_to_sheet(proveedores);
+        XLSX.utils.book_append_sheet(wb, ws4, 'Proveedores Frecuentes');
+      }
 
-    // Hoja 6: Últimas Entradas
-    if (reportes.movimientos_recientes.entradas.length > 0) {
-      const entradas = [
-        ['ID Entrada', 'Material', 'Proveedor', 'Cantidad', 'Fecha'],
-        ...reportes.movimientos_recientes.entradas.map(e => [
-          e.id_entrada,
-          e.materiales.nombre,
-          e.proveedores?.nombre_empresa || 'Sin proveedor',
-          e.cantidad,
-          new Date(e.fecha_entrada).toLocaleDateString('es-ES')
-        ])
-      ];
-      const ws6 = XLSX.utils.aoa_to_sheet(entradas);
-      XLSX.utils.book_append_sheet(wb, ws6, 'Últimas Entradas');
-    }
+      // Hoja 5: Top Materiales por Valor
+      if (reportes.top_materiales_por_valor.length > 0) {
+        const topValor = [
+          ['ID Material', 'Nombre', 'Stock Actual', 'Precio Unitario', 'Unidad Medida', 'Valor Total'],
+          ...reportes.top_materiales_por_valor.map(m => [
+            m.id_material,
+            m.nombre,
+            m.stock_actual,
+            `S/. ${Number(m.precio_unitario).toFixed(2)}`,
+            m.unidad_medida,
+            `S/. ${Number(m.valor_total).toFixed(2)}`
+          ])
+        ];
+        const ws5 = XLSX.utils.aoa_to_sheet(topValor);
+        XLSX.utils.book_append_sheet(wb, ws5, 'Top por Valor');
+      }
 
-    // Hoja 7: Últimas Salidas
-    if (reportes.movimientos_recientes.salidas.length > 0) {
-      const salidas = [
-        ['ID Salida', 'Material', 'Destino', 'Cantidad', 'Fecha'],
-        ...reportes.movimientos_recientes.salidas.map(s => [
-          s.id_salida,
-          s.materiales.nombre,
-          s.destino || 'Sin destino',
-          s.cantidad,
-          new Date(s.fecha_salida).toLocaleDateString('es-ES')
-        ])
-      ];
-      const ws7 = XLSX.utils.aoa_to_sheet(salidas);
-      XLSX.utils.book_append_sheet(wb, ws7, 'Últimas Salidas');
-    }
+      // Hoja 6: Últimas Entradas
+      if (reportes.movimientos_recientes.entradas.length > 0) {
+        const entradas = [
+          ['ID Entrada', 'Material', 'Proveedor', 'Cantidad', 'Fecha'],
+          ...reportes.movimientos_recientes.entradas.map(e => [
+            e.id_entrada,
+            e.materiales.nombre,
+            e.proveedores?.nombre_empresa || 'Sin proveedor',
+            e.cantidad,
+            new Date(e.fecha_entrada).toLocaleDateString('es-ES')
+          ])
+        ];
+        const ws6 = XLSX.utils.aoa_to_sheet(entradas);
+        XLSX.utils.book_append_sheet(wb, ws6, 'Últimas Entradas');
+      }
 
-    // Generar archivo
-    const fecha = new Date().toISOString().split('T')[0];
-    XLSX.writeFile(wb, `Reporte_Inventario_${fecha}.xlsx`);
+      // Hoja 7: Últimas Salidas
+      if (reportes.movimientos_recientes.salidas.length > 0) {
+        const salidas = [
+          ['ID Salida', 'Material', 'Destino', 'Cantidad', 'Fecha'],
+          ...reportes.movimientos_recientes.salidas.map(s => [
+            s.id_salida,
+            s.materiales.nombre,
+            s.destino || 'Sin destino',
+            s.cantidad,
+            new Date(s.fecha_salida).toLocaleDateString('es-ES')
+          ])
+        ];
+        const ws7 = XLSX.utils.aoa_to_sheet(salidas);
+        XLSX.utils.book_append_sheet(wb, ws7, 'Últimas Salidas');
+      }
+
+      // Generar archivo
+      const fecha = new Date().toISOString().split('T')[0];
+      const nombreArchivo = `Reporte_Inventario_${fecha}.xlsx`;
+      
+      console.log('Generando archivo:', nombreArchivo);
+      XLSX.writeFile(wb, nombreArchivo);
+      console.log('Archivo generado exitosamente');
+    } catch (error) {
+      console.error('Error al generar Excel:', error);
+      alert('Error al generar el archivo Excel. Revisa la consola para más detalles.');
+    }
   };
 
   if (loading) {

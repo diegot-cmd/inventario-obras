@@ -250,27 +250,27 @@ export default function MovimientosPage() {
           {/* Ver Salidas */}
           {activeTab === 'salidas' && (
             <div>
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+              <h2 className="text-2xl font-bold text-black mb-6 flex items-center gap-3">
                 <span className="text-2xl">📤</span>
                 Salidas de Materiales
               </h2>
               
               {loading ? (
                 <div className="text-center py-12">
-                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-                  <p className="text-gray-300 mt-4">Cargando salidas...</p>
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+                  <p className="text-gray-600 mt-4">Cargando salidas...</p>
                 </div>
               ) : salidas.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="text-6xl mb-4">📭</div>
-                  <p className="text-gray-300 text-lg">No hay salidas registradas</p>
-                  <p className="text-gray-400 mt-2">Registra tu primera salida de materiales</p>
+                  <p className="text-gray-600 text-lg">No hay salidas registradas</p>
+                  <p className="text-gray-500 mt-2">Registra tu primera salida de materiales</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-white">
+                  <table className="w-full text-black">
                     <thead>
-                      <tr className="border-b border-white/20">
+                      <tr className="border-b border-gray-200">
                         <th className="text-left py-4 px-2">Material</th>
                         <th className="text-left py-4 px-2">Cantidad</th>
                         <th className="text-left py-4 px-2">Destino</th>
@@ -279,7 +279,7 @@ export default function MovimientosPage() {
                     </thead>
                     <tbody>
                       {salidas.map((salida) => (
-                        <tr key={salida.id_salida} className="border-b border-white/10 hover:bg-white/5 transition-colors">
+                        <tr key={salida.id_salida} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                           <td className="py-4 px-2 font-medium">{salida.materiales.nombre}</td>
                           <td className="py-4 px-2">{salida.cantidad}</td>
                           <td className="py-4 px-2">{salida.destino || 'Sin destino'}</td>

@@ -297,7 +297,6 @@ export default function UsuariosPage() {
                 className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
               >
                 <option value="Trabajador">Trabajador</option>
-                <option value="Gerente">Gerente</option>
                 <option value="Admin">Admin</option>
               </select>
             </div>
@@ -378,8 +377,6 @@ export default function UsuariosPage() {
                           className={`px-3 py-1 rounded-full text-sm font-medium ${
                             usuario.role === 'Admin'
                               ? 'bg-black text-white'
-                              : usuario.role === 'Gerente'
-                              ? 'bg-gray-700 text-white'
                               : 'bg-gray-200 text-gray-800'
                           }`}
                         >
