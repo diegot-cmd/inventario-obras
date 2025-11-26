@@ -20,18 +20,19 @@ export async function POST(req: Request) {
     // Hashear la contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Crear usuario
+    // Crear usuario con estado pendiente
     const newUser = await prisma.usuario.create({
       data: {
         nombre,
         email,
         password: hashedPassword,
-        role: role || "Empleado",
+        role: role || "Trabajador",
+        estado: "pendiente", // Estado pendiente hasta que el admin apruebe
       },
     });
 
     return NextResponse.json(
-      { message: "Usuario registrado correctamente", usuario: newUser },
+      { message: "Usuario registrado. Espera la aprobación del administrador.", usuario: newUser },
       { status: 201 }
     );
   } catch (error) {
